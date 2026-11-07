@@ -1,0 +1,12 @@
+{
+  "Svalbard_Longyearbyen": {
+    "Measurable_Mismatches": [
+      {"variable": "Thermal Cycling", "gap": "Medium", "detail": "Lacks the extreme 25K cold-trap floor of Malapert."}
+    ],
+    "Fundamental_Gaps": [
+      {"variable": "Atmosphere", "gap": "Fundamental", "detail": "Earth atmosphere causes light scattering. Lunar shadows are absolute black."},
+      {"variable": "Gravity", "gap": "Fundamental", "detail": "1g vs 1/6th g drastically alters rover wheel slip and regolith cohesion."}
+    ],
+    "Mitigation_Warning": "Success at this Earth site does NOT validate radiator performance or optical navigation in true lunar vacuum darkness."
+  }
+}

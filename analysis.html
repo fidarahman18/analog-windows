@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Analog Windows</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepspace: '#0B0F14',
+                        nasablue: '#3B82F6',
+                        moongray: '#E5E7EB',
+                        panelcard: '#11151C'
+                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0F14;
+            color: #E5E7EB;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+        .card { background-color: #11151C; border: 1px solid #1f2937; border-radius: 0.75rem; }
+        .tab-active { border-bottom: 2px solid #3B82F6; color: #3B82F6; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .layout-transition { transition: all 0.4s ease-in-out; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex">
+
+    <!-- Fixed Inner Sidebar -->
+    <div class="w-20 md:w-72 bg-[#0B0F14] border-r border-gray-800 p-6 md:p-8 flex flex-col shrink-0 min-h-screen fixed z-20">
+        <a href="index.html" class="flex items-center space-x-3 mb-14 mt-1 px-4 hover:opacity-80 transition-opacity">
+            <div class="text-4xl font-bold text-white leading-none">A</div>
+            <div class="hidden md:block text-[11px] font-bold tracking-[0.2em] leading-tight text-white uppercase">ANALOG<br>WINDOWS</div>
+        </a>
+
+        <div class="space-y-4 text-sm font-medium w-full">
+            <div class="bg-[#121b2e] border border-blue-900/50 text-[#5c8aff] flex items-center justify-center md:justify-start space-x-4 px-4 py-3.5 rounded-lg cursor-pointer shadow-lg shadow-nasablue/5">
+                <span class="text-lg leading-none">◫</span>
+                <span class="hidden md:block font-semibold tracking-wide">New Analysis</span>
+            </div>
+            <div class="text-gray-400 hover:text-white hover:bg-gray-900/50 flex items-center justify-center md:justify-start space-x-4 px-4 py-3.5 rounded-lg cursor-pointer transition-all">
+                <span class="text-lg leading-none">✧</span>
+                <span class="hidden md:block font-medium tracking-wide">Missions</span>
+            </div>
+            <div class="text-gray-400 hover:text-white hover:bg-gray-900/50 flex items-center justify-center md:justify-start space-x-4 px-4 py-3.5 rounded-lg cursor-pointer transition-all">
+                <span class="text-lg leading-none">☐</span>
+                <span class="hidden md:block font-medium tracking-wide">Saved Scenarios</span>
+            </div>
+            <div class="text-gray-400 hover:text-white hover:bg-gray-900/50 flex items-center justify-center md:justify-start space-x-4 px-4 py-3.5 rounded-lg cursor-pointer transition-all">
+                <span class="text-lg leading-none">▤</span>
+                <span class="hidden md:block font-medium tracking-wide">Data & Sources</span>
+            </div>
+            <div class="text-gray-400 hover:text-white hover:bg-gray-900/50 flex items-center justify-center md:justify-start space-x-4 px-4 py-3.5 rounded-lg cursor-pointer transition-all">
+                <span class="text-lg leading-none">⚙</span>
+                <span class="hidden md:block font-medium tracking-wide">Settings</span>
+            </div>
+        </div>
+
+        <div class="mt-auto pt-8 pb-4 hidden md:block px-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" alt="NASA" class="w-10 mb-4 opacity-90">
+            <p class="text-[10px] text-gray-500 font-semibold tracking-[0.15em] uppercase">Powered by NASA Open Data</p>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 ml-20 md:ml-72 p-6 md:p-10 flex flex-col bg-[#0d1117] min-h-screen">
+
+        <div class="w-full max-w-[1600px] mx-auto flex flex-col h-full items-start">
+
+            <!-- Universal Top Header & Stepper -->
+            <div class="flex justify-between items-center w-full mb-10">
+                <div class="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-6">
+                    <h2 class="text-2xl font-bold text-white">New Analysis</h2>
+                    <button id="back-btn" onclick="resetLayout()" class="hidden text-xs text-nasablue hover:text-blue-400 transition-colors bg-blue-900/20 border border-blue-900/50 px-4 py-2 rounded-full font-bold">
+                        ← Back to Setup
+                    </button>
+                </div>
+
+                <div class="flex space-x-4 text-xs font-medium text-gray-500">
+                    <div id="step-1" class="flex items-center space-x-2 text-nasablue">
+                        <span class="bg-nasablue text-white rounded-full w-6 h-6 flex items-center justify-center font-bold">1</span>
+                        <span class="hidden sm:inline">Mission</span>
+                    </div>
+                    <div id="step-2" class="flex items-center space-x-2 transition-colors">
+                        <span id="step-2-icon" class="border border-gray-600 rounded-full w-6 h-6 flex items-center justify-center">2</span>
+                        <span class="hidden sm:inline">Parameters</span>
+                    </div>
+                    <div id="step-3" class="flex items-center space-x-2 transition-colors">
+                        <span id="step-3-icon" class="border border-gray-600 rounded-full w-6 h-6 flex items-center justify-center">3</span>
+                        <span class="hidden sm:inline">Results</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Setup Panel: Input & Cards -->
+            <div id="setup-content" class="w-full max-w-4xl flex flex-col pt-4 layout-transition opacity-100">
+                <h3 class="text-xl text-white mb-2 font-bold">What are you testing?</h3>
+                <p class="text-sm text-gray-400 mb-6">Tell us your mission goal or test type, and we'll find the best analogs on Earth.</p>
+
+                <div class="flex flex-col xl:flex-row mb-12 group gap-2 xl:gap-0">
+                    <input type="text" id="mission-input" class="flex-grow w-full min-w-0 bg-[#151a23] border border-gray-700 text-white rounded-lg xl:rounded-r-none xl:rounded-l-lg p-4 focus:border-nasablue focus:outline-none focus:ring-1 focus:ring-nasablue transition-all shadow-inner text-sm" placeholder="e.g. lunar south pole, extreme cold...">
+                    <button class="bg-nasablue text-white px-8 py-4 xl:py-0 rounded-lg xl:rounded-l-none xl:rounded-r-lg font-bold text-sm hover:bg-blue-600 transition-colors shadow-lg whitespace-nowrap">Continue →</button>
+                </div>
+
+                <h3 class="text-sm text-gray-300 mb-4 font-bold">Example missions</h3>
+                <div class="flex gap-6 overflow-x-auto pb-6 no-scrollbar">
+                    <div onclick="selectMission('solar', 'Lunar south pole (Illumination)')" class="min-w-[150px] w-[150px] bg-panelcard border border-gray-700 rounded-xl overflow-hidden hover:border-nasablue cursor-pointer transition-all hover:scale-105 shadow-lg flex flex-col">
+                        <div class="p-4 h-24 border-b border-gray-800">
+                            <p class="text-sm text-white font-bold leading-tight">Lunar south pole</p>
+                            <p class="text-[10px] text-gray-500 mt-1 leading-tight">(Illumination)</p>
+                        </div>
+                        <div class="h-28 bg-gray-800 bg-[url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=300&q=80')] bg-cover bg-center mt-auto grayscale-[20%]"></div>
+                    </div>
+
+                    <div onclick="selectMission('cryo', 'Mars surface operations')" class="min-w-[150px] w-[150px] bg-panelcard border border-gray-700 rounded-xl overflow-hidden hover:border-nasablue cursor-pointer transition-all hover:scale-105 shadow-lg flex flex-col">
+                        <div class="p-4 h-24 border-b border-gray-800">
+                            <p class="text-sm text-white font-bold leading-tight">Mars surface ops</p>
+                            <p class="text-[10px] text-gray-500 mt-1 leading-tight">(Terrain & geology)</p>
+                        </div>
+                        <div class="h-28 bg-gray-800 bg-[url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=300&q=80')] bg-cover bg-center mt-auto grayscale-[20%]"></div>
+                    </div>
+
+                    <div onclick="selectMission('cryo', 'Extreme cold (Thermal)')" class="min-w-[150px] w-[150px] bg-panelcard border border-gray-700 rounded-xl overflow-hidden hover:border-nasablue cursor-pointer transition-all hover:scale-105 shadow-lg flex flex-col">
+                        <div class="p-4 h-24 border-b border-gray-800">
+                            <p class="text-sm text-white font-bold leading-tight">Extreme cold</p>
+                            <p class="text-[10px] text-gray-500 mt-1 leading-tight">(Thermal & radiation)</p>
+                        </div>
+                        <div class="h-28 bg-gray-800 bg-[url('https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=300&q=80')] bg-cover bg-center mt-auto grayscale-[20%]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full-Width Results Panel -->
+            <div id="results-content" class="hidden opacity-0 w-full flex-col space-y-6 layout-transition pt-2">
+
+                <div class="flex space-x-10 border-b border-gray-800 mb-2 pb-0 text-sm text-gray-400 font-medium">
+                    <button onclick="switchTab('where')" id="btn-where" class="tab-active pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold">Where</button>
+                    <button onclick="switchTab('when')" id="btn-when" class="pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold border-b-2 border-transparent">When</button>
+                    <button onclick="switchTab('how')" id="btn-how" class="pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold border-b-2 border-transparent">How</button>
+                    <button onclick="switchTab('missing')" id="btn-missing" class="pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold border-b-2 border-transparent">What's missing</button>
+                </div>
+
+                <!-- Tab 1: WHERE (Fully reconstructed to match concept picture) -->
+                <div id="tab-where" class="w-full flex flex-col space-y-6">
+
+                    <!-- Top Row: Top Sites & Map -->
+                    <div class="flex flex-col xl:flex-row gap-6 w-full">
+                        <div class="card p-6 lg:p-8 w-full xl:w-[40%] flex flex-col shadow-2xl">
+                            <h3 class="text-white font-bold mb-6 text-xl">Top Sites</h3>
+                            <div class="grid grid-cols-12 text-xs text-gray-500 mb-3 px-3 uppercase tracking-wider font-bold">
+                                <div class="col-span-2">Rank</div>
+                                <div class="col-span-6">Site</div>
+                                <div class="col-span-4 text-right">Similarity</div>
+                            </div>
+                            <div id="ranking-list" class="space-y-3 flex-grow">
+                                <!-- Populated by JS -->
+                            </div>
+                            <div class="mt-4 pt-4 text-nasablue text-sm font-bold cursor-pointer hover:text-blue-400">
+                                View all sites →
+                            </div>
+                        </div>
+
+                        <div class="card p-0 w-full xl:w-[60%] relative min-h-[450px] shadow-2xl overflow-hidden">
+                            <!-- Map/List Toggle -->
+                            <div class="absolute top-6 right-6 z-10 flex bg-[#0B0F14] rounded-lg border border-gray-700 overflow-hidden shadow-lg">
+                                <button class="px-5 py-2 text-xs font-bold bg-gray-800 text-white">Map</button>
+                                <button class="px-5 py-2 text-xs font-bold text-gray-400 hover:text-white transition-colors">List</button>
+                            </div>
+                            <!-- Cinematic Map Background -->
+                            <div class="absolute inset-0 bg-[#06090e]"></div>
+                            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-50 mix-blend-screen saturate-50"></div>
+
+                            <!-- Map Pins -->
+                            <div class="absolute bottom-8 left-0 w-full flex justify-center space-x-16 text-xs font-bold text-gray-300">
+                                <div class="flex flex-col items-center cursor-pointer transform hover:-translate-y-1 transition-transform">
+                                    <svg class="w-6 h-6 text-nasablue mb-2 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    <span class="drop-shadow-md">Top site</span>
+                                </div>
+                                <div class="flex flex-col items-center cursor-pointer transform hover:-translate-y-1 transition-transform">
+                                    <svg class="w-6 h-6 text-gray-500 mb-2 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    <span class="drop-shadow-md text-gray-400">Alternative site</span>
+                                </div>
+                                <div class="flex flex-col items-center cursor-pointer transform hover:-translate-y-1 transition-transform">
+                                    <svg class="w-6 h-6 text-nasablue/50 mb-2 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    <span class="drop-shadow-md text-gray-500">Selected sites</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: New Features -->
+                    <div class="flex flex-col lg:flex-row gap-6 w-full">
+
+                        <!-- Feature 1: Selected Site Details -->
+                        <div class="card p-5 w-full lg:w-2/3 flex flex-col md:flex-row items-center shadow-xl gap-6">
+                            <div class="w-full md:w-56 h-36 rounded-lg bg-gray-800 bg-[url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=400&q=80')] bg-cover bg-center shrink-0 border border-gray-700"></div>
+                            <div class="flex-1 flex flex-col justify-center h-full w-full">
+                                <h4 id="feature-site-name" class="text-white font-bold text-xl mb-4">--</h4>
+                                <div class="flex flex-wrap gap-2 mb-5">
+                                    <span class="bg-gray-800 text-gray-300 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider border border-gray-700">High similarity</span>
+                                    <span class="bg-gray-800 text-gray-300 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider border border-gray-700">Low cost</span>
+                                    <span class="bg-gray-800 text-gray-300 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider border border-gray-700">Good coverage</span>
+                                </div>
+                                <div>
+                                    <button class="bg-blue-900/20 border border-nasablue/50 text-nasablue hover:bg-nasablue hover:text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-colors">View details →</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feature 2: Coverage Summary -->
+                        <div class="card p-6 lg:p-8 w-full lg:w-1/3 flex items-center justify-between shadow-xl">
+                            <div class="flex flex-col items-start justify-center space-y-3">
+                                <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">Coverage summary</span>
+                                <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg" style="background: conic-gradient(#3B82F6 87%, #1f2937 0);">
+                                    <div class="w-[68px] h-[68px] bg-[#11151C] rounded-full flex items-center justify-center">
+                                        <span class="text-white font-bold text-xl">87%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-4 items-end text-right">
+                                <span class="text-sm text-gray-300 font-medium">Test plan covered</span>
+                                <button class="text-xs text-gray-400 hover:text-white border-b border-gray-600 hover:border-white pb-0.5 transition-colors font-bold uppercase tracking-wide">Download report</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-when" class="hidden card p-8 lg:p-10 border-l-4 border-l-nasablue w-full shadow-2xl">
+                    <h3 class="text-white font-bold mb-8 text-xl">Target: Malapert Summit</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-3">Validated Sunlit Duration</p>
+                            <p id="sunlit-pct" class="text-6xl font-bold text-nasablue tracking-tight">--%</p>
+                            <p id="sunlit-hours" class="text-sm text-gray-500 mt-3 font-medium">-- total hours</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-3">Best 14-Day Analog Window</p>
+                            <p id="best-window" class="text-2xl font-bold text-white mt-1 leading-tight">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-how" class="hidden card p-8 lg:p-10 w-full border-gray-800 shadow-2xl">
+                    <h3 class="text-white font-bold mb-8 text-xl">Logistics & Cost (Top Site)</h3>
+                    <div id="costs-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm w-full">
+                    </div>
+                </div>
+
+                <div id="tab-missing" class="hidden card p-8 lg:p-10 border-t border-gray-800 shadow-2xl w-full">
+                    <h3 class="text-white font-bold uppercase tracking-widest text-sm mb-8">Gap Matrix</h3>
+                    <div id="gaps-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const profiles = {
+            "solar": { w_ill: 0.9, w_ter: 0.1, w_thm: 0.0 },
+            "cryo": { w_ill: 0.2, w_ter: 0.4, w_thm: 0.4 }
+        };
+
+        const siteData = {
+            "Svalbard_Longyearbyen": { name: "Svalbard, Norway", ill: 95, ter: 50, thm: 50 },
+            "Atacama_Desert": { name: "Atacama Desert, Chile", ill: 60, ter: 90, thm: 85 }
+        };
+
+        let metrics = {};
+        let costs = {};
+        let gaps = {};
+        let currentProfileKey = 'solar';
+        let isResultsVisible = false;
+
+        async function fetchData() {
+            try {
+                const [resMetrics, resCosts, resGaps] = await Promise.all([
+                    fetch('http://127.0.0.1:8000/api/metrics'),
+                    fetch('http://127.0.0.1:8000/api/costs'),
+                    fetch('http://127.0.0.1:8000/api/gaps')
+                ]);
+                metrics = await resMetrics.json();
+                costs = await resCosts.json();
+                gaps = await resGaps.json();
+
+                document.getElementById('sunlit-pct').innerText = metrics.sunlit_percentage + "%";
+                document.getElementById('sunlit-hours').innerText = metrics.sunlit_hours + " total hours";
+                document.getElementById('best-window').innerText = metrics.best_14_day_window_mock;
+            } catch (err) {
+                console.error("API Error", err);
+            }
+        }
+
+        function switchTab(tabName) {
+            const tabs = ['where', 'when', 'how', 'missing'];
+            tabs.forEach(t => {
+                document.getElementById(`btn-${t}`).classList.remove('tab-active', 'text-nasablue');
+                document.getElementById(`btn-${t}`).classList.add('border-b-2', 'border-transparent');
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+            });
+
+            document.getElementById(`btn-${tabName}`).classList.add('tab-active');
+            document.getElementById(`btn-${tabName}`).classList.remove('border-transparent');
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+        }
+
+        function selectMission(profileKey, missionText) {
+            currentProfileKey = profileKey;
+
+            if (!isResultsVisible) {
+                document.getElementById('step-2').classList.add('text-nasablue');
+                document.getElementById('step-2-icon').classList.replace('border-gray-600', 'bg-nasablue');
+                document.getElementById('step-2-icon').classList.replace('border', 'text-white');
+                document.getElementById('step-3').classList.add('text-nasablue');
+                document.getElementById('step-3-icon').classList.replace('border-gray-600', 'bg-nasablue');
+                document.getElementById('step-3-icon').classList.replace('border', 'text-white');
+
+                document.getElementById('back-btn').classList.remove('hidden');
+
+                const setupContent = document.getElementById('setup-content');
+                const resultsContent = document.getElementById('results-content');
+
+                setupContent.classList.add('hidden');
+
+                resultsContent.classList.remove('hidden');
+                resultsContent.classList.add('flex');
+
+                setTimeout(() => {
+                    resultsContent.classList.remove('opacity-0');
+                    resultsContent.classList.add('opacity-100');
+                }, 50);
+
+                isResultsVisible = true;
+                switchTab('where');
+            }
+
+            updateRanking();
+        }
+
+        function resetLayout() {
+            if (isResultsVisible) {
+                const setupContent = document.getElementById('setup-content');
+                const resultsContent = document.getElementById('results-content');
+
+                resultsContent.classList.remove('opacity-100');
+                resultsContent.classList.add('opacity-0');
+
+                setTimeout(() => {
+                    resultsContent.classList.remove('flex');
+                    resultsContent.classList.add('hidden');
+
+                    setupContent.classList.remove('hidden');
+
+                    document.getElementById('step-2').classList.remove('text-nasablue');
+                    document.getElementById('step-2-icon').classList.replace('bg-nasablue', 'border-gray-600');
+                    document.getElementById('step-2-icon').classList.replace('text-white', 'border');
+                    document.getElementById('step-3').classList.remove('text-nasablue');
+                    document.getElementById('step-3-icon').classList.replace('bg-nasablue', 'border-gray-600');
+                    document.getElementById('step-3-icon').classList.replace('text-white', 'border');
+
+                    document.getElementById('back-btn').classList.add('hidden');
+                    document.getElementById('mission-input').value = '';
+
+                    isResultsVisible = false;
+                }, 400);
+            }
+        }
+
+        function updateRanking() {
+            const w = profiles[currentProfileKey];
+
+            let results = Object.keys(siteData).map(key => {
+                const site = siteData[key];
+                const score = (site.ill * w.w_ill) + (site.ter * w.w_ter) + (site.thm * w.w_thm);
+                return { key: key, name: site.name, score: score.toFixed(1) };
+            });
+
+            results.sort((a, b) => b.score - a.score);
+            const topSiteKey = results[0].key;
+
+            const rankingHtml = results.map((r, i) => `
+                <div class="grid grid-cols-12 items-center p-4 transition-colors ${i === 0 ? 'bg-[#151a23] border border-gray-700 rounded-xl border-l-4 border-l-nasablue shadow-md' : 'hover:bg-[#151a23] rounded-xl border border-transparent'}">
+                    <div class="col-span-2 text-gray-500 font-bold text-sm">${i + 1}</div>
+                    <div class="col-span-6 text-white text-base font-bold">${r.name}</div>
+                    <div class="col-span-4 text-right text-nasablue font-bold text-base">${r.score}% <span class="text-[10px] text-gray-500 ml-1 font-medium">Cost: $4.2M</span></div>
+                </div>
+            `).join('');
+            document.getElementById('ranking-list').innerHTML = rankingHtml;
+
+            // Dynamically update the new Bottom Feature Title with the Top Site name
+            document.getElementById('feature-site-name').innerText = siteData[topSiteKey].name;
+
+            renderTopSiteData(topSiteKey);
+        }
+
+        function renderTopSiteData(siteKey) {
+            const siteCosts = costs[siteKey];
+            if (siteCosts) {
+                document.getElementById('costs-container').innerHTML = `
+                    <div class="bg-[#151a23] p-6 rounded-xl border border-gray-800 shadow-md">
+                        <span class="text-gray-500 block mb-2 font-bold text-xs uppercase tracking-widest">Travel Cost:</span>
+                        <span class="text-white text-2xl font-bold">${siteCosts.travel_cost_tier}</span>
+                    </div>
+                    <div class="bg-[#151a23] p-6 rounded-xl border border-gray-800 shadow-md">
+                        <span class="text-gray-500 block mb-2 font-bold text-xs uppercase tracking-widest">Clearances:</span>
+                        <span class="text-white font-medium text-base leading-snug">${siteCosts.permit_delay}</span>
+                    </div>
+                    <div class="col-span-1 md:col-span-2 bg-[#151a23] p-6 rounded-xl border border-gray-800 shadow-md">
+                        <span class="text-gray-500 block mb-2 font-bold text-xs uppercase tracking-widest">Freight:</span>
+                        <span class="text-white font-medium text-base">${siteCosts.equipment_freight}</span>
+                    </div>
+                `;
+            }
+
+            const siteGaps = gaps[siteKey];
+            const gapContainer = document.getElementById('gaps-container');
+            if (!siteGaps) { gapContainer.innerHTML = ''; return; }
+
+            let gapHtml = '';
+            if (siteGaps.Fundamental_Gaps) {
+                gapHtml += `<div class="border border-gray-800 rounded-xl p-6 bg-deepspace shadow-md">
+                    <p class="text-nasablue text-xs font-bold mb-5 uppercase tracking-wider flex items-center">⚠ Fundamental Gaps</p>
+                    ${siteGaps.Fundamental_Gaps.map(g => `<div class="mb-5 last:mb-0"><strong class="text-white block mb-1.5 text-base">${g.variable}</strong> <span class="text-gray-400 leading-snug font-medium text-sm">${g.detail}</span></div>`).join('')}
+                </div>`;
+            }
+            if (siteGaps.Measurable_Mismatches) {
+                gapHtml += `<div class="border border-gray-800 rounded-xl p-6 bg-deepspace shadow-md">
+                    <p class="text-white text-xs font-bold mb-5 uppercase tracking-wider flex items-center">⚠ Measurable Mismatches</p>
+                    ${siteGaps.Measurable_Mismatches.map(g => `<div class="mb-5 last:mb-0"><strong class="text-white block mb-1.5 text-base">${g.variable}</strong> <span class="text-gray-400 leading-snug font-medium text-sm">${g.detail}</span></div>`).join('')}
+                </div>`;
+            }
+            if (siteGaps.Mitigation_Warning) {
+                gapHtml += `<div class="border border-gray-800 rounded-xl p-6 bg-deepspace shadow-md">
+                    <p class="text-gray-400 text-xs font-bold mb-5 uppercase tracking-wider flex items-center">ℹ Scientific Disclaimer</p>
+                    <p class="text-sm text-gray-400 leading-relaxed font-medium">${siteGaps.Mitigation_Warning}</p>
+                </div>`;
+            }
+            gapContainer.innerHTML = gapHtml;
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>

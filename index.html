@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Windows | NASA Space Apps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepspace: '#0B0F14',
+                        nasablue: '#3B82F6',
+                        moongray: '#E5E7EB',
+                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0F14;
+            color: #E5E7EB;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            background-image:
+                linear-gradient(to right, rgba(11, 15, 20, 1) 0%, rgba(11, 15, 20, 0.6) 40%, rgba(11, 15, 20, 0.1) 100%),
+                url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+        }
+
+        .target-box {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 250px;
+            height: 250px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Top Navigation -->
+    <nav class="absolute w-full z-50 p-6">
+        <div class="max-w-[1400px] mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="text-4xl font-bold text-white">A</div>
+                <div class="text-lg font-bold tracking-widest leading-tight text-white uppercase">ANALOG<br>WINDOWS</div>
+            </div>
+            <div class="flex space-x-8 text-sm items-center font-medium">
+                <a href="#" class="hover:text-white transition-colors text-gray-300">Home</a>
+                <a href="#" class="hover:text-white transition-colors text-gray-300">How it works</a>
+                <a href="#" class="hover:text-white transition-colors text-gray-300">About</a>
+                <a href="analysis.html" class="bg-white text-black px-6 py-2.5 rounded-full font-bold hover:bg-gray-200 transition-colors">Start a mission</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Landing Section -->
+    <header class="hero-bg h-screen relative flex items-center pt-20">
+        <div class="max-w-[1400px] mx-auto w-full px-6 grid grid-cols-12 relative z-10">
+            <!-- Left Text Content -->
+            <div class="col-span-12 lg:col-span-7 space-y-6">
+                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">NASA Space Apps Challenge</p>
+                <h1 class="text-5xl lg:text-[4rem] font-bold text-white leading-[1.1]">
+                    Find Earth's best<br>
+                    <span class="text-nasablue">analog windows</span> for<br>
+                    your space mission.
+                </h1>
+                <p class="text-base text-gray-300 max-w-lg leading-relaxed font-medium">
+                    Analog Windows uses open NASA data to help you find where, when, how, and what's missing — so you can test on Earth with confidence.
+                </p>
+                <div class="pt-4">
+                    <a href="analysis.html" class="inline-flex items-center bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition-colors text-sm">
+                        Start your analysis <span class="ml-2">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Visual Elements -->
+            <div class="hidden lg:flex col-span-5 relative items-center justify-end">
+                <div class="absolute right-0 top-0 translate-y-[20px] flex items-start">
+                    <div class="target-box relative mr-8 border border-white/20">
+                        <div class="absolute right-[-2rem] top-1/2 w-8 h-[1px] bg-white/40"></div>
+                        <div class="absolute right-[-2rem] top-1/2 w-[1px] h-32 bg-white/40"></div>
+                    </div>
+
+                    <div class="mt-40 ml-4 pl-5 py-3 border-l border-white/40 relative overflow-hidden rounded-r-xl">
+                        <div class="absolute inset-0 bg-gradient-to-r from-deepspace/70 to-transparent backdrop-blur-md -z-10"></div>
+                        <p class="text-sm text-gray-100 font-medium leading-loose tracking-widest shadow-black drop-shadow-lg">
+                            Same sky.<br>
+                            Different planet.<br>
+                            <span class="text-nasablue font-bold">Real answers.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+</body>
+</html>

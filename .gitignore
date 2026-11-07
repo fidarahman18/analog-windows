@@ -1,0 +1,31 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# PyCharm & IDE settings
+.idea/
+.vscode/
+
+# Python Cache & Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment Variables & Secrets
+.env
+.env.*
+*.pem
+
+# Heavy Data Directories
+data/
+datasets/
+
+# Heavy NASA/Spatial File Extensions
+*.tif
+*.tiff
+*.bsp
+*.nc
+*.hdf5
+*.dem

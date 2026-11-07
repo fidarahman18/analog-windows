@@ -1,0 +1,14 @@
+{
+  "Svalbard_Longyearbyen": {
+    "travel_cost_tier": "$$$",
+    "equipment_freight": "Air cargo required, severe weight limits",
+    "permit_delay": "High (Governor of Svalbard environmental clearance)",
+    "seasonal_access": "March to September"
+  },
+  "Atacama_Desert": {
+    "travel_cost_tier": "$$",
+    "equipment_freight": "Ground transport from Antofagasta port",
+    "permit_delay": "Medium (Regional government approval)",
+    "seasonal_access": "Year-round"
+  }
+}
