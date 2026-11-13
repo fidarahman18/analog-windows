@@ -18,14 +18,23 @@ __pycache__/
 .env.*
 *.pem
 
-# Heavy Data Directories
-data/
+# Data Directories (Keep the README, ignore the massive datasets)
 datasets/
+data/*
+!data/README_DATA.md
 
 # Heavy NASA/Spatial File Extensions
 *.tif
 *.tiff
 *.bsp
+*.bpc
+*.tpc
+*.tls
+*.tf
+*.tab
 *.nc
 *.hdf5
 *.dem
+
+# OS Generated Files
+.DS_Store*.zip

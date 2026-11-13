@@ -39,7 +39,7 @@
 
     <!-- Fixed Inner Sidebar -->
     <div class="w-20 md:w-72 bg-[#0B0F14] border-r border-gray-800 p-6 md:p-8 flex flex-col shrink-0 min-h-screen fixed z-20">
-        <a href="index.html" class="flex items-center space-x-3 mb-14 mt-1 px-4 hover:opacity-80 transition-opacity">
+        <a href="/" class="flex items-center space-x-3 mb-14 mt-1 px-4 hover:opacity-80 transition-opacity">
             <div class="text-4xl font-bold text-white leading-none">A</div>
             <div class="hidden md:block text-[11px] font-bold tracking-[0.2em] leading-tight text-white uppercase">ANALOG<br>WINDOWS</div>
         </a>
@@ -149,6 +149,8 @@
                     <button onclick="switchTab('when')" id="btn-when" class="pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold border-b-2 border-transparent">When</button>
                     <button onclick="switchTab('how')" id="btn-how" class="pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold border-b-2 border-transparent">How</button>
                     <button onclick="switchTab('missing')" id="btn-missing" class="pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold border-b-2 border-transparent">What's missing</button>
+                    <!-- NEW THERMAL TAB -->
+                    <button onclick="switchTab('thermal')" id="btn-thermal" class="pb-4 hover:text-white transition-colors uppercase tracking-widest text-[11px] font-bold border-b-2 border-transparent">Thermal</button>
                 </div>
 
                 <!-- Tab 1: WHERE (Fully reconstructed to match concept picture) -->
@@ -262,6 +264,40 @@
                     <div id="gaps-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     </div>
                 </div>
+
+                <!-- NEW THERMAL TAB CONTENT -->
+                <div id="tab-thermal" class="hidden w-full flex-col space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+
+                        <!-- Svalbard Card -->
+                        <div class="card p-8 lg:p-10 border-t-4 border-t-nasablue w-full shadow-2xl bg-panelcard flex flex-col">
+                            <h3 class="text-white font-bold mb-6 text-xl border-b border-gray-800 pb-4">Svalbard, Arctic</h3>
+                            <div class="mb-6">
+                                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-2">Earth Range</p>
+                                <p class="text-3xl font-bold text-white"><span id="sval-min">--</span>K <span class="text-gray-500 text-lg mx-2">to</span> <span id="sval-max">--</span>K</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-2">Lunar Overlap Window</p>
+                                <p class="text-5xl font-bold text-nasablue tracking-tight"><span id="sval-overlap-mag">--</span> <span class="text-xl text-gray-400 font-medium">Kelvin</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Atacama Card -->
+                        <div class="card p-8 lg:p-10 border-t-4 border-t-gray-600 w-full shadow-2xl bg-panelcard flex flex-col">
+                            <h3 class="text-white font-bold mb-6 text-xl border-b border-gray-800 pb-4">Atacama Desert, Chile</h3>
+                            <div class="mb-6">
+                                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-2">Earth Range</p>
+                                <p class="text-3xl font-bold text-white"><span id="ata-min">--</span>K <span class="text-gray-500 text-lg mx-2">to</span> <span id="ata-max">--</span>K</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-2">Lunar Overlap Window</p>
+                                <p class="text-5xl font-bold text-white tracking-tight"><span id="ata-overlap-mag">--</span> <span class="text-xl text-gray-400 font-medium">Kelvin</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -285,26 +321,60 @@
         let isResultsVisible = false;
 
         async function fetchData() {
+            // 1. Fetch Thermal Data using a relative path to avoid CORS blocks
+            try {
+                const resThermal = await fetch('/api/thermal/compare');
+                if (resThermal.ok) {
+                    const thermalData = await resThermal.json();
+
+                    if (thermalData && thermalData.sites) {
+                        const sval = thermalData.sites.svalbard;
+                        document.getElementById('sval-min').textContent = sval.earth_metrics.annual_min_k.toFixed(1);
+                        document.getElementById('sval-max').textContent = sval.earth_metrics.annual_max_k.toFixed(1);
+                        document.getElementById('sval-overlap-mag').textContent = sval.overlap.overlap_magnitude_k.toFixed(1);
+
+                        const ata = thermalData.sites.atacama;
+                        document.getElementById('ata-min').textContent = ata.earth_metrics.annual_min_k.toFixed(1);
+                        document.getElementById('ata-max').textContent = ata.earth_metrics.annual_max_k.toFixed(1);
+                        document.getElementById('ata-overlap-mag').textContent = ata.overlap.overlap_magnitude_k.toFixed(1);
+                    }
+                }
+            } catch (err) {
+                console.error("Thermal API Error:", err);
+            }
+
+            // 2. Fetch all Mock Data safely with relative paths
             try {
                 const [resMetrics, resCosts, resGaps] = await Promise.all([
-                    fetch('http://127.0.0.1:8000/api/metrics'),
-                    fetch('http://127.0.0.1:8000/api/costs'),
-                    fetch('http://127.0.0.1:8000/api/gaps')
+                    fetch('/api/metrics').catch(() => null),
+                    fetch('/api/costs').catch(() => null),
+                    fetch('/api/gaps').catch(() => null)
                 ]);
-                metrics = await resMetrics.json();
-                costs = await resCosts.json();
-                gaps = await resGaps.json();
 
-                document.getElementById('sunlit-pct').innerText = metrics.sunlit_percentage + "%";
-                document.getElementById('sunlit-hours').innerText = metrics.sunlit_hours + " total hours";
-                document.getElementById('best-window').innerText = metrics.best_14_day_window_mock;
+                if (resMetrics && resMetrics.ok) {
+                    metrics = await resMetrics.json();
+                    document.getElementById('sunlit-pct').innerText = metrics.sunlit_percentage + "%";
+                    document.getElementById('sunlit-hours').innerText = metrics.sunlit_hours + " total hours";
+                    document.getElementById('best-window').innerText = metrics.best_14_day_window_mock;
+                }
+
+                // Restore the costs and gaps data
+                if (resCosts && resCosts.ok) costs = await resCosts.json();
+                if (resGaps && resGaps.ok) gaps = await resGaps.json();
+
+                // If the user already clicked a mission, re-render the UI with the newly fetched data
+                if (isResultsVisible) {
+                    updateRanking();
+                }
+
             } catch (err) {
-                console.error("API Error", err);
+                console.warn("Mock endpoints error:", err);
             }
         }
 
         function switchTab(tabName) {
-            const tabs = ['where', 'when', 'how', 'missing'];
+            // Added 'thermal' to the tabs array
+            const tabs = ['where', 'when', 'how', 'missing', 'thermal'];
             tabs.forEach(t => {
                 document.getElementById(`btn-${t}`).classList.remove('tab-active', 'text-nasablue');
                 document.getElementById(`btn-${t}`).classList.add('border-b-2', 'border-transparent');
@@ -399,7 +469,6 @@
             `).join('');
             document.getElementById('ranking-list').innerHTML = rankingHtml;
 
-            // Dynamically update the new Bottom Feature Title with the Top Site name
             document.getElementById('feature-site-name').innerText = siteData[topSiteKey].name;
 
             renderTopSiteData(topSiteKey);
