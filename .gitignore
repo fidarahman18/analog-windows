@@ -36,7 +36,7 @@ data/*
 *.hdf5
 *.dem
 
-# OS Generated Files
-.DS_Store*.zip
-data.zip
+# OS Generated Files & Archives
+.DS_Store
+*.zip
 data.zip
