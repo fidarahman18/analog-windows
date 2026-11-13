@@ -1,35 +1,16 @@
-# Data Manifest (Analog Windows)
 
-This document serves as the official data manifest for the Analog Windows project, outlining all NASA and open-source datasets utilized in our core engines.
+### `DATA_MANIFEST.md`
 
-## 1. Ephemeris & Geometry (O1 Illumination Engine)
-* **Provider:** NASA NAIF (Navigation and Ancillary Information Facility)
-* **Datasets (SPICE Kernels):**
-  * `de440s.bsp`: Planetary Ephemeris (Sun/Moon orbital trajectories)
-  * `pck00010.tpc`: Planetary Constants (Moon radii and orientation)
-  * `naif0012.tls`: Leapseconds Kernel (Time conversions)
-  * `moon_pa_de421_1900-2050.bpc`: Lunar principal axes orientation
-  * `moon_080317.tf` / `moon_assoc_me.tf`: Reference frames
+```markdown
+# Analog Windows: Scientific Data Traceability
 
-## 2. Lunar Terrain & Elevation (O1 & O2 Engines)
-* **Provider:** NASA PGDA (Planetary Geodynamics Data Archive)
-* **Dataset:** Product 78 (Site 23 - Malapert Massif)
-  * `Site23_final_adj_5mpp_surf.tif`: 5m/pixel Digital Elevation Model
-  * `Site23_final_adj_5mpp_toterr.tif`: Total Error masking layer
-  * `Site23_final_adj_5mpp_ldec.tif`: Effective Resolution masking layer
-* **Provider:** Zenodo (Record 17084058)
-  * `wueller_shapefiles`: Lunar target bounding geometries
+To comply with GitHub's file size limits while maintaining strict scientific provenance, our heavy DEMs and ephemeris kernels are hosted externally for local execution. The Analog Windows backend relies exclusively on the following authoritative space agency datasets:
 
-## 3. Earth Terrain (O2 Terrain Engine)
-* **Provider:** NASA LP DAAC (Land Processes Distributed Active Archive Center)
-* **Dataset:** ASTER Global Digital Elevation Model (GDEM) v3
-  * `aster_svalbard.tif`: Extracted elevation map for Svalbard, Norway
-
-## 4. Thermal Environments (O3 Thermal Engine)
-* **Provider:** NASA PDS (Planetary Data System)
-* **Dataset:** LRO Diviner Lunar Radiometer Experiment
-  * `dlre_prp_south.tab`: South Pole gridded thermal profiles
-* **Provider:** NASA LP DAAC
-* **Dataset:** Terra/Aqua MODIS (Moderate Resolution Imaging Spectroradiometer)
-  * `modis_thermal/svalbard`: Terrestrial surface temperatures
-  * `modis_thermal/atacama`: Terrestrial surface temperatures
+| Dataset Name | Source/Agency | Product ID / DOI | Spatial/Temporal Resolution | Retrieval Date |
+| :--- | :--- | :--- | :--- | :--- |
+| **LOLA High-Resolution Site DEMs (Malapert)** | NASA PGDA | Product 78 | 5 meters/pixel (using ERR/EFFRES masks) | Nov 2026 |
+| **NAIF SPICE Kernels (Planetary Ephemeris)** | NASA NAIF | de440s, moon_pa_de421, pck00010, naif0012 | High-precision orbital vectors | Nov 2026 |
+| **ASTER Global Digital Elevation Model V003** | NASA LP DAAC | ASTGTM_003 (10.5067/ASTER/ASTGTM.003) | 30 meters (downsampled to 200m) | Nov 2026 |
+| **Terra Land Surface Temperature (MODIS)** | NASA LP DAAC | MOD11A1.061 | 1 kilometer / Daily | Nov 2026 |
+| **MOLA Mission Experiment Gridded Data Record** | NASA PDS | MEGDR | 463 meters/pixel | Nov 2026 |
+| **Diviner Lunar Radiometer Experiment** | NASA PDS | Polar Resource Product | 240 meters/pixel | Nov 2026 |
